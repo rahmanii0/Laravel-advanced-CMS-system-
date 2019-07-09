@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -20,6 +21,11 @@
             toastr.success("{{ Session::get('success') }}")
 
             @endif
+            @if(Session::has('info'))
+
+toastr.info("{{ Session::get('info') }}")
+
+@endif
     </script>
 
     <!-- Fonts -->
@@ -105,8 +111,14 @@
                             </li>
                             <li class="list-group-item">
 
+                                <a href="{{ route('posts') }}">posts</a>
+                            </li>
+                            
+                            <li class="list-group-item">
+
                                 <a href="{{ route('category.index') }}">categories</a>
                             </li>
+
                         </ul>
                     </div>
            @endif

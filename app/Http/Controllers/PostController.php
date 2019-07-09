@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Category;
+use App\Post;
+use Session;
 use Illuminate\Http\Request;
 use phpDocumentor\Reflection\Types\This;
 
@@ -14,7 +16,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        return view ('admin.posts.index')->with('posts',Post::all());
     }
 
     /**
@@ -24,7 +26,14 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('admin.posts.create');
+        $categories = Category::all();
+
+        if($categories->count() == 0){
+            return redirect()->back();
+
+            Session::flash('info','you must choose category to create a post');
+        }
+        return view('admin.posts.create')->with('categories',$categories);
     }
 
     /**
@@ -38,9 +47,25 @@ class PostController extends Controller
         $this->validate($request,[
            'title'=>'required',
            'featured'=>'required|image',
-            'content'=>'required'
+            'content'=>'required',
+            'category_id'=>'required'
         ]);
-        dd($request);
+        $featured = $request->featured;
+        $featured_new_name = time().$featured->getClientOriginalName();
+        $featured->move('uploads/posts',$featured_new_name);
+
+        $post = Post::create([
+
+            'title'=>$request->title,
+            'content'=> $request->content,
+            'featured'=>'uploads/posts/'.$featured_new_name,
+            'category_id'=>$request->category_id,
+            'slug'=>str_slug($request->title)
+
+
+        ]);
+
+            return redirect()->back();
     }
 
     /**

@@ -10,8 +10,6 @@
 
 
 
-        @endif
-
     <div class="panel panel-default">
         <div class="panel-heading">
            <h2>create a new post</h2>
@@ -27,6 +25,16 @@
                 <div class="form-group">
                     <label for="featured">Featured image</label>
                     <input type="file"  name="featured" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="category">select Category</label>
+                    <select name="category_id" id="category" class="form-control">
+                        @foreach($categories as $category)
+
+                    <option value="{{$category->id}}">{{$category->name}}</option>
+
+                        @endforeach
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="title">content</label>
