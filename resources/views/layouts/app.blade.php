@@ -113,11 +113,23 @@ toastr.info("{{ Session::get('info') }}")
 
                                 <a href="{{ route('posts') }}">posts</a>
                             </li>
-                            
+                            <li class="list-group-item">
+
+                                <a href="{{ route('posts.trashed') }}">trashed posts</a>
+                            </li>
                             <li class="list-group-item">
 
                                 <a href="{{ route('category.index') }}">categories</a>
                             </li>
+                            <li class="list-group-item">
+                    <a href="{{ route('tags') }}">tags</a>
+                           </li>
+                           <li class="list-group-item">
+                    <a href="{{ route('tag.create') }}"> create tags</a>
+                           </li>
+                           <li class="list-group-item">
+                    <a href="{{ route('users') }}">users</a>
+                           </li>
 
                         </ul>
                     </div>

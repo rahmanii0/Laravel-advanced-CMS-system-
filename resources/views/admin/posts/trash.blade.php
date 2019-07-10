@@ -15,20 +15,35 @@
                 <th>title</th>
                 <th> content</th>
                 <th>Edit</th>
-                <th>Delete</th>
+                <th>Restore</th>
+                <th>Destory</th>
+
             </thead>
          <tbody>
-                @foreach($posts as $post)
+         @if($posts->count() > 0)
 
+         @foreach($posts as $post)
                     <tr>
                      <td><img src=" {{$post->featured}}" alt="{{$post->title}}" width="90px" height="50px"></td>
                      <td>{{$post->title}}</td>
                      <td>{{$post->content}}</td>
                      <td><a href="{{route('post.edit',['id'=>$post->id])}}" class="btn btn-info">Edit</a></td>
-                     <td><a href="{{ route('post.delete',['id'=>$post->id])}}" class="btn btn-danger">trash</a></td>
+                     <td><a href="{{ route('post.restore',['id'=>$post->id])}}" class="btn btn-success">Restore</a></td>
+                     <td><a href="{{ route('post.kill',['id'=>$post->id])}}" class="btn btn-danger">Delete</a></td>
+
                     </tr>
 
                 @endforeach
+
+
+         @else
+
+            <tr>
+            <th cplspan='5' class="text-center">No trash posts</th>
+            </tr>
+
+         @endif
+        
          </tbody>
             </table>
         </div>
