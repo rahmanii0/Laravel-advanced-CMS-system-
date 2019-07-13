@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Profile;
 use Illuminate\Http\Request;
 use App\User;
 
@@ -11,7 +12,14 @@ class UsersController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
-     */
+     **/
+
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
+
+
     public function index()
     {
         return view('admin.users.index')->with('users', User::all());
@@ -24,7 +32,7 @@ class UsersController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.users.create')->with('users,');
     }
 
     /**
@@ -35,7 +43,23 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,[
+            'name'=>'required',
+            'email'=>'required',
+
+
+            ]);
+        $user = User::create([
+            'name' =>$request->name,
+        'email' =>$request->email,
+            'password'=>bcrypt('password'),
+        ]);
+        $profile = Profile::create([
+            'user_id'=> $user->id,
+            'avatar'=>'uploads/avatars/1.jpg'
+        ]);
+        return view('admin.users.index')->with('users', User::all());
+
     }
 
     /**
@@ -81,5 +105,20 @@ class UsersController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function admin($id){
+        $user = User::find($id) ;
+        $user->admin = 1;
+        $user->save();
+
+        return redirect()->back();
+    }
+    public function notAdmin($id){
+        $user = User::find($id) ;
+        $user->admin = 0;
+        $user->save();
+
+        return redirect()->back();
     }
 }

@@ -17,9 +17,9 @@ class CreateProfilesTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->string('avatar');
-            $table->text('about');
-            $table->string('facebook');
+            $table->string('avatar')->nullable();
+            $table->text('about')->nullable();
+            $table->string('facebook')->nullable();
             $table->timestamps();
         });
     }
