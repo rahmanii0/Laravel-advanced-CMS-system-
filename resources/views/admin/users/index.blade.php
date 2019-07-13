@@ -22,7 +22,7 @@
 
                     <tr>
                      <td>
-{{--                     <img src="{{  asset($user->profile->avatar) }}" alt="" width="60px" hight="60px">--}}
+{{--            <img src="{{  asset($user->profile->avatar) }}" alt="" width="60px" hight="60px">--}}
                      </td>
                      <td>{{$user->name}}</td>
                         <td>{{$user->email}}</td>

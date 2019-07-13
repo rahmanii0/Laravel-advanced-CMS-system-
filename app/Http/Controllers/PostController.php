@@ -29,7 +29,7 @@ class PostController extends Controller
     {
         $categories = Category::all();
 
-        if($categories->count() == 0){
+        if(!$this->isThereCategory($categories)){
             return redirect()->back();
 
             Session::flash('info','you must choose category to create a post');
@@ -45,30 +45,26 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request,[
-           'title'=>'required',
-           'featured'=>'required|image',
-            'content'=>'required',
-            'category_id'=>'required'
-        ]);
-        $featured = $request->featured;
-        $featured_new_name = time().$featured->getClientOriginalName();
-        $featured->move('uploads/posts',$featured_new_name);
-
-        $post = Post::create([
-
-            'title'=>$request->title,
-            'content'=> $request->content,
-            'featured'=>'uploads/posts/'.$featured_new_name,
-            'category_id'=>$request->category_id,
-            'slug'=>str_slug($request->title)
-
-
-        ]);
+        $this->validateRequest($request);
+        $featured_new_name = $this->uploadFile($request);
+        $post = $this->createPost($request, $featured_new_name);
         $post->tags()->attach($request->tags);
-
-        return view ('admin.posts.index')->with('posts',Post::all());
-    }    
+        return view('admin.posts.index')->with('posts',Post::all());
+    }
+    /**
+     * @param Request $request
+     * @return array|void
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function validateRequest(Request $request): void
+    {
+        $this->validate($request, [
+            'title' => 'required',
+            'featured' => 'required|image',
+            'content' => 'required',
+            'category_id' => 'required'
+        ]);
+    }
 
     /**
      * Display the specified resource.
@@ -110,9 +106,7 @@ class PostController extends Controller
          $post = Post::find($id);
 
          if($request->hasFile('featured')){
-           $featured = $request->featured;
-           $featured_new_name =time() . $featured->getClientOriginalName();
-           $featured->move('uploads/posts',$featured_new_name);
+             $featured_new_name = $this->uploadFile($request);
            $post->featured = 'uploads/posts/'.$featured_new_name;
         }
 
@@ -153,5 +147,56 @@ class PostController extends Controller
       $post->restore();
       return view('admin.posts.index')->with('posts', Post::all());
 
+    }
+
+    /**
+     * @param $categories
+     * @return bool
+     */
+    public function isThereCategory($categories): bool
+    {
+        return $categories->count() !== 0;
+    }
+
+
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    public function uploadFile(Request $request): string
+    {
+        $featured = $request->featured;
+        $featured_new_name = $this->renameFile($featured);
+        $featured->move('uploads/posts', $featured_new_name);
+        return $featured_new_name;
+    }
+
+    /**
+     * @param Request $request
+     * @param string $featured_new_name
+     * @return mixed
+     */
+    public function createPost(Request $request, string $featured_new_name)
+    {
+        $post = Post::create([
+
+            'title' => $request->title,
+            'content' => $request->content,
+            'featured' => 'uploads/posts/' . $featured_new_name,
+            'category_id' => $request->category_id,
+            'slug' => str_slug($request->title)
+
+        ]);
+        return $post;
+    }
+
+    /**
+     * @param $featured
+     * @return string
+     */
+    public function renameFile($featured): string
+    {
+        return time() . $featured->getClientOriginalName();
     }
 }
